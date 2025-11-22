@@ -1,3 +1,13 @@
+import {myPartLibrary} from './parts.js';
+var partLibrary = myPartLibrary();
+console.log(partLibrary);
+
+let part = {
+  id: 0,
+  name: "null",
+  icon: "images/null.png"
+}
+
 const pinboard = document.getElementById('pinboard');
 const screenContainer = document.getElementById('screen-container');
 

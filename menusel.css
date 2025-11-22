@@ -7,7 +7,7 @@ body {
 #pinboard {
   width: 800px;
   height: 500px;
-  background: url('pinboard_texture.png');
+  background: url('images/pinboard_texture.png');
   background-size: cover;
   margin: 40px auto;
   position: relative;

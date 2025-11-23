@@ -1,5 +1,3 @@
-console.log(partLibrary);
-
 const pinboard = document.getElementById('pinboard');
 const screenContainer = document.getElementById('screen-container');
 
@@ -24,7 +22,6 @@ function switchScreen(target) {
 	}
 		currentScreen = target;
 }
-
 
 //store original page and slot index
 

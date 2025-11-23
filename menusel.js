@@ -1,12 +1,4 @@
-import {myPartLibrary} from './parts.js';
-var partLibrary = myPartLibrary();
 console.log(partLibrary);
-
-let part = {
-  id: 0,
-  name: "null",
-  icon: "images/null.png"
-}
 
 const pinboard = document.getElementById('pinboard');
 const screenContainer = document.getElementById('screen-container');
@@ -22,23 +14,23 @@ rightArrow.onclick = () => switchScreen(2);
 leftArrow.onclick = () => switchScreen(1);
 
 function switchScreen(target) {
-  if (target === currentScreen) return;
-  if (target === 2) {
-    screen1.style.left = "-100%";
-    screen2.style.left = "0";
-  } else {
-    screen1.style.left = "0";
-    screen2.style.left = "100%";
-  }
-  currentScreen = target;
+	if (target === currentScreen) return;
+	if (target === 2) {
+		screen1.style.left = "-100%";
+		screen2.style.left = "0";
+	} else {
+		screen1.style.left = "0";
+		screen2.style.left = "100%";
+	}
+		currentScreen = target;
 }
 
 
 //store original page and slot index
 
 document.querySelectorAll(".ear").forEach((ear) => {
-  ear.dataset.homeParent = ear.parentNode.id;
-  ear.dataset.homeIndex = [...ear.parentNode.children].indexOf(ear);
+	ear.dataset.homeParent = ear.parentNode.id;
+	ear.dataset.homeIndex = [...ear.parentNode.children].indexOf(ear);
 });
 
 let dragged = null;
@@ -49,135 +41,135 @@ let raf = null;
 let targetX = 0, targetY = 0;
 
 function onPointerDown(e) {
-  if (e.pointerType === 'mouse' && e.button !== 0) return;
-  e.preventDefault();
+	if (e.pointerType === 'mouse' && e.button !== 0) return;
+	e.preventDefault();
 
-  dragged = e.currentTarget;
-  pointerId = e.pointerId;
-  dragged.setPointerCapture && dragged.setPointerCapture(pointerId);
+	dragged = e.currentTarget;
+	pointerId = e.pointerId;
+	dragged.setPointerCapture && dragged.setPointerCapture(pointerId);
 
-  const rect = dragged.getBoundingClientRect();
-  offsetX = e.clientX - rect.left;
-  offsetY = e.clientY - rect.top;
+	const rect = dragged.getBoundingClientRect();
+	offsetX = e.clientX - rect.left;
+	offsetY = e.clientY - rect.top;
 
-  // Create placeholder in screen before moving
-  placeholder = document.createElement("div");
-  placeholder.className = "ear-placeholder";
-  placeholder.style.width = rect.width + "px";
-  placeholder.style.height = rect.height + "px";
-  dragged.parentNode.insertBefore(placeholder, dragged);
+	// Create placeholder in screen before moving
+	placeholder = document.createElement("div");
+	placeholder.className = "ear-placeholder";
+	placeholder.style.width = rect.width + "px";
+	placeholder.style.height = rect.height + "px";
+	dragged.parentNode.insertBefore(placeholder, dragged);
 
-  // Move ear to body for free dragging
-  document.body.appendChild(dragged);
-  dragged.classList.add("dragging");
-  dragged.style.position = "absolute";
-  dragged.style.width = rect.width + "px";
-  dragged.style.height = rect.height + "px";
-  dragged.style.zIndex = 9999;
+	// Move ear to body for free dragging
+	document.body.appendChild(dragged);
+	dragged.classList.add("dragging");
+	dragged.style.position = "absolute";
+	dragged.style.width = rect.width + "px";
+	dragged.style.height = rect.height + "px";
+	dragged.style.zIndex = 9999;
 
-  targetX = e.clientX - offsetX;
-  targetY = e.clientY - offsetY;
-  updatePosition();
+	targetX = e.clientX - offsetX;
+	targetY = e.clientY - offsetY;
+	updatePosition();
 
-  window.addEventListener("pointermove", onPointerMove);
-  window.addEventListener("pointerup", onPointerUp);
+	window.addEventListener("pointermove", onPointerMove);
+	window.addEventListener("pointerup", onPointerUp);
 }
 
 function onPointerMove(e) {
-  if (!dragged || e.pointerId !== pointerId) return;
-  e.preventDefault();
-  targetX = e.clientX - offsetX;
-  targetY = e.clientY - offsetY;
+	if (!dragged || e.pointerId !== pointerId) return;
+	e.preventDefault();
+	targetX = e.clientX - offsetX;
+	targetY = e.clientY - offsetY;
 }
 
 function updatePosition() {
-  if (!dragged) return;
-  dragged.style.left = targetX + "px";
-  dragged.style.top = targetY + "px";
-  raf = requestAnimationFrame(updatePosition);
+	if (!dragged) return;
+	dragged.style.left = targetX + "px";
+	dragged.style.top = targetY + "px";
+	raf = requestAnimationFrame(updatePosition);
 }
 
 function onPointerUp(e) {
-  if (!dragged || e.pointerId !== pointerId) return;
+  	if (!dragged || e.pointerId !== pointerId) return;
 
-  cancelAnimationFrame(raf);
-  raf = null;
-  dragged.releasePointerCapture && dragged.releasePointerCapture(pointerId);
+  	cancelAnimationFrame(raf);
+  	raf = null;
+  	dragged.releasePointerCapture && dragged.releasePointerCapture(pointerId);
 
-  const pinRect = screenContainer.getBoundingClientRect();
-  const inside =
-    e.clientX >= pinRect.left &&
-    e.clientX <= pinRect.right &&
-    e.clientY >= pinRect.top &&
-    e.clientY <= pinRect.bottom;
+  	const pinRect = screenContainer.getBoundingClientRect();
+  	const inside =
+		e.clientX >= pinRect.left &&
+		e.clientX <= pinRect.right &&
+		e.clientY >= pinRect.top &&
+		e.clientY <= pinRect.bottom;
 
   // Remove placeholder BEFORE anything else
-  if (placeholder) placeholder.remove();
+  	if (placeholder) placeholder.remove();
 
-  if (inside) {
-    // ------------------------------------------
-    // SNAP BACK INTO ORIGINAL SLOT (Option A)
-    // ------------------------------------------
-    const homeParent = document.getElementById(dragged.dataset.homeParent);
-    const homeIndex = parseInt(dragged.dataset.homeIndex, 10);
+  	if (inside) {
+		// ------------------------------------------
+		// SNAP BACK INTO ORIGINAL SLOT (Option A)
+		// ------------------------------------------
+		const homeParent = document.getElementById(dragged.dataset.homeParent);
+		const homeIndex = parseInt(dragged.dataset.homeIndex, 10);
 
-    // Restore styling first (fixes disappearing issue)
-    restoreEarStyles(dragged);
+		// Restore styling first (fixes disappearing issue)
+		restoreEarStyles(dragged);
 
-    const kids = [...homeParent.children];
+		const kids = [...homeParent.children];
 
-    if (homeIndex >= kids.length) {
-      homeParent.appendChild(dragged);
-    } else {
-      homeParent.insertBefore(dragged, kids[homeIndex]);
-    }
+		if (homeIndex >= kids.length) {
+			homeParent.appendChild(dragged);
+		} else {
+			homeParent.insertBefore(dragged, kids[homeIndex]);
+		}
 
-    delete dragged.dataset.removedFromMenu;
-  } else {
-    // Leave ear floating off-board
-    dragged.dataset.removedFromMenu = "true";
-    dragged.classList.remove("dragging");
-    dragged.style.cursor = "grab";
-  }
+		delete dragged.dataset.removedFromMenu;
+	} else {
+		// Leave ear floating off-board
+		dragged.dataset.removedFromMenu = "true";
+		dragged.classList.remove("dragging");
+		dragged.style.cursor = "grab";
+	}
 
-  dragged = null;
-  placeholder = null;
-  pointerId = null;
+	dragged = null;
+	placeholder = null;
+	pointerId = null;
 
-  window.removeEventListener("pointermove", onPointerMove);
-  window.removeEventListener("pointerup", onPointerUp);
+	window.removeEventListener("pointermove", onPointerMove);
+	window.removeEventListener("pointerup", onPointerUp);
 }
 
 function restoreEarStyles(el) {
-  el.style.position = "";
-  el.style.left = "";
-  el.style.top = "";
-  el.style.zIndex = "";
-  el.style.width = "";
-  el.style.height = "";
-  el.style.cursor = "grab";
-  el.classList.remove("dragging");
+	el.style.position = "";
+	el.style.left = "";
+	el.style.top = "";
+	el.style.zIndex = "";
+	el.style.width = "";
+	el.style.height = "";
+	el.style.cursor = "grab";
+	el.classList.remove("dragging");
 }
 
 // Attach pointer listeners
 document.querySelectorAll('.ear').forEach(ear => {
-  ear.style.touchAction = "none";
-  ear.addEventListener("pointerdown", onPointerDown);
+	ear.style.touchAction = "none";
+	ear.addEventListener("pointerdown", onPointerDown);
 });
 
 // Optional: double-click restoration
 document.addEventListener("dblclick", e => {
-  const el = e.target.closest(".ear");
-  if (!el || el.dataset.removedFromMenu !== "true") return;
+	const el = e.target.closest(".ear");
+	if (!el || el.dataset.removedFromMenu !== "true") return;
 
-  const homeParent = document.getElementById(el.dataset.homeParent);
-  const homeIndex = parseInt(el.dataset.homeIndex, 10);
-  const kids = [...homeParent.children];
+	const homeParent = document.getElementById(el.dataset.homeParent);
+	const homeIndex = parseInt(el.dataset.homeIndex, 10);
+	const kids = [...homeParent.children];
 
-  restoreEarStyles(el);
+	restoreEarStyles(el);
 
-  if (homeIndex >= kids.length) homeParent.appendChild(el);
-  else homeParent.insertBefore(el, kids[homeIndex]);
+	if (homeIndex >= kids.length) homeParent.appendChild(el);
+	else homeParent.insertBefore(el, kids[homeIndex]);
 
-  delete el.dataset.removedFromMenu;
+	delete el.dataset.removedFromMenu;
 });
